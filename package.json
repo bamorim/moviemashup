@@ -1,0 +1,17 @@
+{
+  "name": "MovieMashup",
+  "version": "0.0.0",
+  "description": "Get up with mashed up movie titles",
+  "main": "server.js",
+  "dependencies": {
+    "express": "~3.4.8",
+    "ejs": "~0.8.5",
+    "ejs-locals": "~1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Bernardo Amorim"
+}

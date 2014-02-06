@@ -1,0 +1,7 @@
+<% layout('layout') -%>
+<h1><%= title %></h1>
+<h2>Filme Original</h2>
+<a target="_blank" href="http://www.themoviedb.org/movie/<%= movie.id %>?language=pt">
+  <h3><%= movie.title %></h3>
+  <img src="http://image.tmdb.org/t/p/w150<%= movie.poster_path %>">
+</a>
