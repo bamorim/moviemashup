@@ -4,7 +4,7 @@ var express = require('express'),
     engine = require('ejs-locals');
 
 const api_key = process.env.TMDB_API_KEY;
-const forbiddenWords = "a e i o u é à há em ou de da do para desde que das dos no na nos nas".split(" ");
+const forbiddenWords = "a e i o u é à há em ou de da do para desde que das dos no na nos nas - 1 2 3 4 5 6 7 8 9 i ii iii iv v vi".split(" ");
 
 const isAllowed = function(word){
   return forbiddenWords.indexOf(word.toLowerCase()) < 0;
