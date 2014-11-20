@@ -21,6 +21,29 @@ app.get('/',function(req,res){
   res.render('index');
 });
 
+app.get("/:word/:movieId/:wordIndex",function(req,res,next){
+  var options = {
+    host: 'api.themoviedb.org',
+    port: 80,
+    path: '/3/movie/'+req.params.movieId+'?api_key='+api_key
+  };
+
+  http.get(options,function(resp){
+    var dataStr = "";
+    resp.on('data',function(chunk){
+      dataStr = dataStr + chunk.toString();
+    };
+
+    resp.on('end',function(){
+      var movie = JSON.parse(dataStr);
+      var titleWords = movie.title.split(" ");
+      titleWords[req.params.wordIndex] = req.params.word.capitalize();
+      var newMovieTitle = titleWords.join(" ");
+      res.render('results',{title: newMovieTitle, movie: movie, locals:{ word: req.params.word }});
+    });
+  }).on('error',next);
+});
+
 app.get('/:word',function(req,res,next){
   var page = parseInt(Math.random() * 100) + 1;
   var options = {
