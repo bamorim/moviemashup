@@ -4,8 +4,8 @@ var express = require('express'),
     engine = require('ejs-locals');
 
 const api_key = process.env.TMDB_API_KEY;
-const forbiddenWords = "a e i o u é à há em ou de da do para desde que das dos no na nos nas i ii iii iv v vi".split(" ");
-const allowedRegex = /(?=[^\d])\w/
+const forbiddenWords = "a e i o u é à as os um uma umas uns há em ou de da do para desde que das dos no na nos nas i ii iii iv v vi vii".split(" ");
+const allowedRegex = /(?=[^\d])\w/;
 
 const isAllowed = function(word){
   return word.match(allowedRegex) && forbiddenWords.indexOf(word.toLowerCase()) < 0;
@@ -45,12 +45,19 @@ app.get("/:word/:movieId/:wordIndex",function(req,res,next){
   }).on('error',next);
 });
 
-function random_replace(title){
+function randomReplace(title, word){
   var movieTitleWords = title.split(" ");
   var allowedWords = movieTitleWords.filter(isAllowed);
   var wordToBeChanged = allowedWords[parseInt(allowedWords.length*Math.random())];
-  movieTitleWords[movieTitleWords.indexOf(wordToBeChanged)] = req.params.word.capitalize();
+  movieTitleWords[movieTitleWords.indexOf(wordToBeChanged)] = word.capitalize();
   return movieTitleWords.join(" ");
+}
+
+function movieIsAllowed(movie){
+  return (
+    (movie.original_language === "pt" || movie.title !== movie.original_title) &&
+    movie.title.split(/\s+/).filter(isAllowed).length > 1
+  );
 }
 
 app.get('/:word',function(req,res,next){
@@ -67,15 +74,12 @@ app.get('/:word',function(req,res,next){
     });
     resp.on('end',function() {
       var data = JSON.parse(dataStr);
-      var movies = data.results.filter(function(movie){
-        return movie.title.split(" ").filter(isAllowed).length > 1
-      });
+      var movies = data.results.filter(movieIsAllowed);
       
       if(movies.length == 0) return res.redirect('.');
 
-      var movieIndex = parseInt(movies.length*Math.random());
-      var movie = movies[movieIndex];
-      res.render('results',{title: random_replace(movie.title), movie: movie, locals:{ word: req.params.word }});
+      var movie = movies[parseInt(movies.length*Math.random())];
+      res.render('results',{title: randomReplace(movie.title,req.params.word), movie: movie, locals:{ word: req.params.word }});
     });
   }).on('error',next);
 });
